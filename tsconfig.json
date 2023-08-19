@@ -19,8 +19,12 @@
         "name": "next"
       }
     ],
+    "baseUrl" : ".",
     "paths": {
-      "@/*": ["./src/*"]
+      "@/*": ["./src/*"],
+      "@styles" :["./public/common/css/globals.css"],
+      "@rootLayout":["src/app/layout.tsx"],
+      "@commonSideBar":["./src/app/commons/sideBar.tsx"]
     }
   },
   "include": ["next-env.d.ts", "**/*.ts", "**/*.tsx", ".next/types/**/*.ts"],
