@@ -1,3 +1,5 @@
+'use client';
+
 const Login = () => {
   const eventHandler_onclick = (tag_info: any) => {
     console.log("tag information", tag_info);

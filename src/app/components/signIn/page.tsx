@@ -7,13 +7,15 @@ const SignIn = () => {
   interface FormDataProps {
     userEmail: string;
     userPassword: string;
-    phoneNumber: string;
+    userPhoneNumber: string;
+    userName: string;
   }
   /* state 모음 */
   const [formData, setFormData] = useState<FormDataProps>({
     userEmail: "",
     userPassword: "",
-    phoneNumber: "",
+    userPhoneNumber: "",
+    userName : ""
   });
 
   /* useEffect */
@@ -21,13 +23,19 @@ const SignIn = () => {
   /* input validation for phone numbers */
   const handleInputChange_phone = (event: ChangeEvent<HTMLInputElement>) => {
     const { name, value } = event.target;
+
+    console.log("name and value : {},{} ", name, value);
+
     // Remove any non-digit characters from the input value
     const sanitizedValue = value.replace(/\D/g, "");
+    console.log("sanitizedValue : ", sanitizedValue);
+
     // Update state
     setFormData((prevFormData) => ({
       ...prevFormData,
       [name]: sanitizedValue,
     }));
+
     // Update input box
     event.target.value = sanitizedValue;
   };
@@ -35,6 +43,7 @@ const SignIn = () => {
   /* formData Handling */
   const handleInputChange = (e: ChangeEvent<HTMLInputElement>) => {
     const { name, value } = e.target; // made name identical with state and tags
+    console.log(name, value);
     setFormData((prevFormData) => ({
       ...prevFormData,
       [name]: value,
@@ -49,27 +58,40 @@ const SignIn = () => {
     try {
       console.log("sending data:", JSON.stringify(formData));
 
-      await fetch("http://localhost:8080/newUserAccount", {
-        method: "POST",
-        headers: {
-          "Content-Type": "application/json", // Set the appropriate content type for your data
-          // Add other headers as needed
-        },
-        body: JSON.stringify(formData), // Convert your data to JSON string format
-      })
-        .then((res) => {
-          if (!res.body) {
-            throw new Error("failed to retrive Data from server check status.");
-          } else {
-            console.log("res : ", res, typeof res);
-          }
-          return res.json();
+      if (formData.userEmail === "") {
+        alert("이메일이 공백이거나 올바르지 않은 형식입니다.");
+        return;
+      } else if (formData.userPassword === "") {
+        alert("비밀번호는 필수 입니다.");
+        return;
+      } else if (formData.userPhoneNumber === "") {
+        alert("전화번호는 꼭 입력해주세요.");
+        return;
+      } else {
+        await fetch("http://localhost:8080/newUserAccount", {
+          method: "POST",
+          headers: {
+            "Content-Type": "application/json", // Set the appropriate content type for your data
+            // Add other headers as needed
+          },
+          body: JSON.stringify(formData), // Convert your data to JSON string format
         })
-        .then((data) => {
-          console.log(data);
-          // do something you want after this.
-        });
-      // Handle the response data here
+          .then((res) => {
+            if (!res.body) {
+              throw new Error(
+                "failed to retrive Data from server check status."
+              );
+            } else {
+              console.log("res : ", res, typeof res);
+            }
+            return res.json();
+          })
+          .then((data) => {
+            console.log(data);
+            // do something you want after this.
+          });
+        // Handle the response data here
+      }
     } catch (error) {
       // Handle any network errors or exceptions that occur during the fetch process
       console.error("Error posting data:", error);
@@ -105,6 +127,23 @@ const SignIn = () => {
         <div className="mb-4">
           <label
             className="block text-gray-700 text-sm font-bold mb-2"
+            htmlFor="userName"
+          >
+            Name :
+          </label>
+          <input
+            required
+            className="shadow appearance-none border rounded w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline"
+            id="userName"
+            name="userName"
+            type="text"
+            value={formData.userName}
+            onChange={handleInputChange}
+          />
+        </div>
+        <div className="mb-4">
+          <label
+            className="block text-gray-700 text-sm font-bold mb-2"
             htmlFor="password"
           >
             Password :
@@ -122,17 +161,17 @@ const SignIn = () => {
         <div className="mb-4">
           <label
             className="block text-gray-700 text-sm font-bold mb-2"
-            htmlFor="phone"
+            htmlFor="userPhoneNumber"
           >
             Phone Number :
           </label>
           <input
             required
             className="shadow appearance-none border rounded w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline"
-            id="phone"
-            name="phoneNumber"
+            id="userPhoneNumber"
+            name="userPhoneNumber"
             type="tel"
-            value={formData.phoneNumber}
+            value={formData.userPhoneNumber}
             onChange={handleInputChange_phone}
           />
         </div>
@@ -144,9 +183,7 @@ const SignIn = () => {
           Register
         </button>
         <Link href={"/"}>
-          <button
-            className="bg-slate-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded focus:outline-none focus:shadow-outline"
-          >
+          <button className="bg-slate-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded focus:outline-none focus:shadow-outline">
             Home
           </button>
         </Link>
