@@ -18,7 +18,14 @@ const SideBar = () => {
           <li>
             <Link href="/components/diary_input">
               <p className="text-gray-300 hover:text-white text-center text-2xl">
-                diary
+                write diary
+              </p>
+            </Link>
+          </li>
+          <li>
+            <Link href="/components/read_diary">
+              <p className="text-gray-300 hover:text-white text-center text-2xl">
+                read diary
               </p>
             </Link>
           </li>
