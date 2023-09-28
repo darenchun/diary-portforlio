@@ -1,32 +1,21 @@
 "use client";
-import { useState } from "react";
+import Link from "next/link";
+import { useEffect, useState } from "react";
 import ReactQuill from "react-quill";
 import "react-quill/dist/quill.snow.css";
 
 const Diary_input = () => {
   /* Quill editor csr rendering [start] */
-  /* const QuillEditor = dynamic(
-    () => {
-      return import("react-quill").then((quill) => {
-        console.log(quill);
-        return quill;
-      });
-    },
-    { ssr: false }
-  ); */
-  /* Quill editor csr rendering [end] */
   interface StateSetProps {
     article_pk: number;
     value: string;
   }
 
+  /* Quill editor state */
   const [stateSet, setStateSet] = useState<StateSetProps>({
     article_pk: 0,
     value: "",
   });
-
-  /* Quill editor state */
-  // const [value, setValue] = useState<string>("");
 
   /* Quill editor setState */
   const handleOnChange = (editorContents: string) => {
@@ -34,6 +23,32 @@ const Diary_input = () => {
     console.log(stateSet.value);
   };
 
+  /* Get initial data from backend */
+  useEffect(() => {
+    //fetching data
+    fetch("http://localhost:8080/getArticle?diary_pk=1", {
+      method: "GET",
+      headers: {
+        "Content-Type": "application/json",
+      },
+    })
+      .then((response) => {
+        if (!response.ok) {
+          throw new Error("Couldn't retrieve article information from Server"+ response.statusText);
+        } else {
+          return response.json();
+        }
+      })
+      .then((data) => {
+        console.log("returned data: ", data);
+        setStateSet(() => ({
+          article_pk: data.diary_article_pk,
+          value: data.diary_contents,
+        }));
+      });
+  }, []);
+
+  /* etc functions */
   const eventHandler_onclick = (event: any): void => {
     try {
       event.preventDefault();
@@ -86,12 +101,11 @@ const Diary_input = () => {
         >
           save
         </button>
-        <button
-          className="bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded focus:outline-none focus:shadow-outline"
-          onClick={eventHandler_onclick}
-        >
-          cancel
-        </button>
+        <Link href="/">
+          <button className="bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded focus:outline-none focus:shadow-outline">
+            cancel
+          </button>
+        </Link>
       </div>
     </>
   );

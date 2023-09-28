@@ -42,8 +42,7 @@ const Diary_input = () => {
         await fetch("http://localhost:8080/newArticle", {
           method: "POST",
           headers: {
-            "Content-Type": "application/json", // Set the appropriate content type for your data
-            // Add other headers as needed
+            "Content-Type": "application/json",
           },
           body: JSON.stringify(stateSet), // Convert your data to JSON string format
         })
